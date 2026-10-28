@@ -1,1 +1,4 @@
-pytest, allure-pytest, selenium
+pytest
+requests
+allure-pytest
+faker
