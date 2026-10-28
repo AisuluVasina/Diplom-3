@@ -2,6 +2,8 @@ import allure
 
 from pages.base_page import BasePage
 from locators import LoginPageLocators
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class LoginPage(BasePage):
     @allure.step("Открыть страницу входа")
@@ -26,3 +28,6 @@ class LoginPage(BasePage):
         self.set_email(email)
         self.set_password(password)
         self.submit_login()
+
+    def is_authorized(self) -> bool:
+        return self.is_element_visible(*LoginPageLocators.PROFILE_ICON)

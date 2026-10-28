@@ -21,20 +21,20 @@ class BasePage:
         "clickable": EC.element_to_be_clickable,
     }
 
-    def _wait_for_element(self, locator, timeout=10, condition="presence"):
+    def _wait_for_element(self, locator, timeout=3, condition="presence"):
         ec_func = self._EC_MAP.get(condition)
         if not ec_func:
             raise ValueError(f"Неизвестное условие ожидания: {condition}")
         wait = WebDriverWait(self.driver, timeout, poll_frequency=0.5)
         return wait.until(ec_func(locator))
 
-    def find_element(self, locator, timeout=10):
+    def find_element(self, locator, timeout=3):
         return self._wait_for_element(locator, timeout, "presence")
 
-    def find_visible_element(self, locator, timeout=10):
+    def find_visible_element(self, locator, timeout=3):
         return self._wait_for_element(locator, timeout, "visible")
 
-    def find_clickable_element(self, locator, timeout=10):
+    def find_clickable_element(self, locator, timeout=3):
         return self._wait_for_element(locator, timeout, "clickable")
 
     @allure.step("Клик по элементу")
@@ -73,7 +73,7 @@ class BasePage:
             return False
 
     @allure.step("Ждать, пока URL содержит подстроку")
-    def wait_for_url_contains(self, substring: str, timeout=15):
+    def wait_for_url_contains(self, substring: str, timeout=10):
         WebDriverWait(self.driver, timeout).until(EC.url_contains(substring))
 
     @allure.step("Ждать исчезновения элемента")
@@ -89,3 +89,17 @@ class BasePage:
                 return result
             time.sleep(0.5)
         raise TimeoutException(f"Условие не выполнено за {timeout} сек")
+
+    @allure.step("Выполнить JS-скрипт")
+    def execute_script(self, script, *args):
+        """Обёртка над driver.execute_script для соблюдения принципа инкапсуляции."""
+        return self.driver.execute_script(script, *args)
+
+    def is_element_visible(self, by, value, timeout=10):
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located((by, value))
+            )
+            return True
+        except Exception:
+            return False
