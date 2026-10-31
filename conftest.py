@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from helpers import generate_email, generate_password
-from generators import generate_user_data
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 
 @pytest.fixture(params=["chrome", "firefox"])
@@ -18,7 +18,6 @@ def driver(request):
         options = ChromeOptions()
         driver = webdriver.Chrome(options=options)
     else:
-        from selenium.webdriver.firefox.options import Options as FirefoxOptions
         options = FirefoxOptions()
         options.set_preference("browser.startup.page", 0)
         options.set_preference("browser.startup.homepage", "")
@@ -72,4 +71,4 @@ def logged_in_user(driver, registered_user):
     wait = WebDriverWait(driver, 15)
     wait.until(EC.visibility_of_element_located(ConstructorPageLocators.TITLE_ASSEMBLE_THE_BURGER))
 
-    yield driver
+    return driver
